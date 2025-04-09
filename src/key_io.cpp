@@ -198,6 +198,23 @@ CTxDestination DecodeDestination(const std::string& str, const CChainParams& par
                 }
                 return CNoDestination();
             }
+            if (version == 1) {
+                {
+                    WitnessV1KeyHash keyid;
+                    if (data.size() == keyid.size()) {
+                        std::copy(data.begin(), data.end(), keyid.begin());
+                        return keyid;
+                    }
+                }
+                {
+                    WitnessV1ScriptHash scriptid;
+                    if (data.size() == scriptid.size()) {
+                        std::copy(data.begin(), data.end(), scriptid.begin());
+                        return scriptid;
+                    }
+                }
+                return CNoDestination();
+            }
             if (version > 16 || data.size() < 2 || data.size() > 40) {
                 return CNoDestination();
             }
