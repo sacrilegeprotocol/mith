@@ -1,7 +1,3 @@
-// Copyright (c) 2017-2018 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
-
 #include <consensus/tx_verify.h>
 
 #include <consensus/consensus.h>
@@ -200,6 +196,17 @@ bool CheckTransaction(const CTransaction& tx, CValidationState &state, bool fChe
         for (const auto& txin : tx.vin)
             if (txin.prevout.IsNull())
                 return state.DoS(10, false, REJECT_INVALID, "bad-txns-prevout-null");
+    }
+
+    // Validate address formats for Mith and Ring
+    for (const auto& txout : tx.vout)
+    {
+        CTxDestination dest;
+        if (ExtractDestination(txout.scriptPubKey, dest))
+        {
+            if (txout.nValue > 0 && !IsValidDestination(dest))
+                return state.DoS(100, false, REJECT_INVALID, "bad-txns-invalid-destination");
+        }
     }
 
     return true;
