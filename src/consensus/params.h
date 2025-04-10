@@ -1,3 +1,4 @@
+// Copyright (c) 2025 The dwarf Developers
 // Copyright (c) 2018-2019 The Ring Developers
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2018 The Bitcoin Core developers
@@ -130,6 +131,22 @@ struct Params {
     int popScoreAdjustWindowSize;       // Windows size for adjusting pop score target
     int popMinScoreTarget;              // Min score target
     int popMaxScoreTarget;              // Max score target
+    // Parameters for the block reward halving mechanism
+    int nSubsidyHalvingInterval;
+    CAmount initialBlockReward;
+    CAmount minBlockReward;
+    int halvingInterval;
+
+    // Parameters for the ASERT difficulty adjustment mechanism
+    int64_t nPowTargetBlockTime;
+    int64_t nPowTargetTimespan;
+    int64_t nPowTargetSpacingEMA;
+    int64_t nPowTargetTimespanEMA;
+
+    // Parameters for the Argon2iD mining algorithm
+    uint32_t argon2id_t_cost;
+    uint32_t argon2id_m_cost;
+    uint32_t argon2id_parallelism;
 };
 } // namespace Consensus
 
