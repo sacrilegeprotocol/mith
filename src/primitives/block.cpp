@@ -1,3 +1,4 @@
+// Copyright (c) 2025 The dwarf Developers
 // Copyright (c) 2018-2019 The Ring Developers
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2018 The Bitcoin Core developers
@@ -36,12 +37,11 @@ uint256 CBlockHeader::MinotaurHashArbitrary(const char *data)
 
 // Ring-fork: Seperate block hash and pow hash: Include powHash in ToString()
 // Ring-fork: Hive: Include block type in ToString()
-// Ring-fork: Pop: Include block type in ToString()
 std::string CBlock::ToString() const
 {
     std::stringstream s;
     s << strprintf("CBlock(type=%s, hash=%s, powHash=%s, ver=0x%08x, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u, vtx=%u)\n",
-        IsHiveMined(Params().GetConsensus()) ? "hive" : IsPopMined(Params().GetConsensus()) ? "pop" : "pow",
+        IsHiveMined(Params().GetConsensus()) ? "hive"  : "pow",
         GetHash().ToString(),
         GetPowHash().ToString(),
         nVersion,
