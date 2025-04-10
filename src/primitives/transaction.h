@@ -426,4 +426,11 @@ typedef std::shared_ptr<const CTransaction> CTransactionRef;
 static inline CTransactionRef MakeTransactionRef() { return std::make_shared<const CTransaction>(); }
 template <typename Tx> static inline CTransactionRef MakeTransactionRef(Tx&& txIn) { return std::make_shared<const CTransaction>(std::forward<Tx>(txIn)); }
 
+// Define the structure for a burning transaction
+struct BurnTransaction {
+    std::string address;    // The address of the miner
+    double amount;          // The amount of A coin burned
+    int confirmedBlockHeight; // Block height when the transaction was confirmed
+};
+
 #endif // RING_PRIMITIVES_TRANSACTION_H
