@@ -1,3 +1,4 @@
+// Copyright (c) 2025 The dwarf Developers
 // Copyright (c) 2018-2019 The Ring Developers
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2018 The Bitcoin Core developers
@@ -27,5 +28,20 @@ CTxDestination DecodeDestination(const std::string& str);
 CTxDestination DecodeAnyDestination(const std::string& str, std::string& detectedType); // Ring-fork: Decode any foreign address and transform it into a Ring CTxDestination
 bool IsValidDestinationString(const std::string& str);
 bool IsValidDestinationString(const std::string& str, const CChainParams& params);
+
+// Function to validate if an address is a valid Mith address
+bool IsValidMithAddress(const std::string& address);
+
+// Function to validate if an address is a valid Ring address
+bool IsValidRingAddress(const std::string& address);
+
+// Function to check if an address is either Mith or Ring address
+bool IsValidAddress(const std::string& address);
+
+// Function to set the currency type for a given address
+std::string GetCurrencyType(const std::string& address);
+
+// Function to validate a transaction based on currency isolation rules
+bool IsValidTransaction(const CTransaction& tx);
 
 #endif // RING_KEY_IO_H
