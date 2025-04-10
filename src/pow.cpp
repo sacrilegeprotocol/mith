@@ -20,7 +20,7 @@
 #include <logging.h>            // Ring-fork: Hive
 #include <key_io.h>             // Ring-fork: Hive
 #include <crypto/pop/game0/game0.h>   // Ring-fork: Pop
-
+#include <crypto/argon2/argon2.h> // Argon2iD
 DwarfPopGraphPoint dwarfPopGraph[1024*40];       // Ring-fork: Hive
 
 // Ring-fork: Difficulty adjustment is based on Zawy's fixed DGW.
@@ -751,4 +751,43 @@ bool CheckPopProof(const CBlock* pblock, const Consensus::Params& consensusParam
     if (verbose)
         LogPrintf("CheckPopProof: Pass at %i\n", blockHeight);
     return true;
+}
+/ ASERT difficulty adjustment mechanism
+unsigned int GetNextASERTWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params& params)
+{
+    assert(pindexLast != nullptr);
+    unsigned int nProofOfWorkLimit = UintToArith256(params.powLimit).GetCompact();
+
+    // Allow extremely low difficulty up to the last initial distribution block
+    if (pindexLast->nHeight < params.lastInitialDistributionHeight)
+        return UintToArith256(params.powLimitInitialDistribution).GetCompact();
+
+    const arith_uint256 bnPowLimit = UintToArith256(params.powLimit);
+
+    // Allow minimum difficulty blocks if we haven't seen a block for ostensibly 10 blocks worth of time (testnet only)
+    if (params.fPowAllowMinDifficultyBlocks && pblock->GetBlockTime() > pindexLast->GetBlockTime() + params.nPowTargetSpacing * 10)
+        return bnPowLimit.GetCompact();
+
+    // Calculate the new difficulty based on ASERT formula
+    int64_t nActualTimespan = pindexLast->GetBlockTime() - pindexLast->pprev->GetBlockTime();
+    int64_t nTargetTimespan = params.nPowTargetSpacing;
+    int64_t nTimeDiff = nActualTimespan - nTargetTimespan;
+    double exponent = static_cast<double>(nTimeDiff) / (params.nPowTargetSpacing * 288);
+    double adjustmentFactor = pow(2.0, exponent);
+
+    arith_uint256 bnNew;
+    bnNew.SetCompact(pindexLast->nBits);
+    bnNew *= adjustmentFactor;
+
+    if (bnNew > bnPowLimit)
+        bnNew = bnPowLimit;
+
+    return bnNew.GetCompact();
+}
+
+// Argon2iD mining algorithm
+bool Argon2iDHash(const std::string& password, const std::string& salt, std::vector<unsigned char>& out)
+{
+    out.resize(32); // 32 bytes output
+    return argon2id_hash_raw(4000, 1024 * 1024, 1, password.data(), password.size(), salt.data(), salt.size(), out.data(), out.size()) == 0;
 }
