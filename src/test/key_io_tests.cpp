@@ -145,5 +145,9 @@ BOOST_AUTO_TEST_CASE(key_io_invalid)
         }
     }
 }
-
+// Goal: check that Mith addresses are valid
 BOOST_AUTO_TEST_SUITE_END()
+{
+    BOOST_CHECK(IsValidMithAddress("mthq1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")
+}
+    
