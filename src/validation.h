@@ -1,5 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2019 The Bitcoin Core developers
+// Copyright (c) 2025 The Dwarf developers
+
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -515,5 +517,14 @@ inline bool IsBlockPruned(const CBlockIndex* pblockindex)
 {
     return (fHavePruned && !(pblockindex->nStatus & BLOCK_HAVE_DATA) && pblockindex->nTx > 0);
 }
+
+// Function to check if the current block is a reward block (multiple of 5)
+bool IsRewardBlock(int blockHeight);
+
+// Function to distribute 1 Ring reward based on burning transactions
+void DistributeRingReward(int blockHeight, const std::vector<BurnTransaction>& burnTransactions);
+
+// Function to handle burning transactions and their confirmation logic
+void HandleBurnTransaction(int blockHeight, const BurnTransaction& burnTx);
 
 #endif // RING_VALIDATION_H
