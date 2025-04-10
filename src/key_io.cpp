@@ -333,9 +333,6 @@ bool IsValidDestinationString(const std::string& str)
     return IsValidDestinationString(str, Params());
 }
 
-    }
-    if (IsValidRingAddress(address)) {
-        return "Ring";  // Ring address
 // Function to validate if an address is a valid Mith  address
 // Mith addresses should use Bech32 format and start with "mthq"
 bool IsValidMithAddress(const std::string& address) {
