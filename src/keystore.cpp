@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2018 The Bitcoin Core developers
+// Copyright (c) 2025 The dwarf Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -51,6 +52,9 @@ bool CBasicKeyStore::GetPubKey(const CKeyID &address, CPubKey &vchPubKeyOut) con
 bool CBasicKeyStore::AddKeyPubKey(const CKey& key, const CPubKey &pubkey)
 {
     LOCK(cs_KeyStore);
+    if (!IsValidAddress(EncodeDestination(pubkey.GetID()))) {
+        return false;
+    }
     mapKeys[pubkey.GetID()] = key;
     ImplicitlyLearnRelatedKeyScripts(pubkey);
     return true;
@@ -75,6 +79,9 @@ std::set<CKeyID> CBasicKeyStore::GetKeys() const
 bool CBasicKeyStore::GetKey(const CKeyID &address, CKey &keyOut) const
 {
     LOCK(cs_KeyStore);
+    if (!IsValidAddress(EncodeDestination(address))) {
+        return false;
+    }
     KeyMap::const_iterator mi = mapKeys.find(address);
     if (mi != mapKeys.end()) {
         keyOut = mi->second;
