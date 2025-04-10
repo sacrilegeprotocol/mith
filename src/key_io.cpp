@@ -1,3 +1,4 @@
+// Copyright (c) 2025 The dwarf Developers
 // Copyright (c) 2018-2019 The Ring Developers
 // Copyright (c) 2014-2018 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
@@ -330,4 +331,79 @@ bool IsValidDestinationString(const std::string& str, const CChainParams& params
 bool IsValidDestinationString(const std::string& str)
 {
     return IsValidDestinationString(str, Params());
+}
+
+    }
+    if (IsValidRingAddress(address)) {
+        return "Ring";  // Ring address
+// Function to validate if an address is a valid Mith  address
+// Mith addresses should use Bech32 format and start with "mthq"
+bool IsValidMithAddress(const std::string& address) {
+    // Check if address starts with "mthq"
+    if (!IsValidBech32(address)) {
+        return false;
+    }
+
+    return address.substr(0, 4) == "mthq";  // Ensure prefix "mthq" for Mith
+}
+
+// Function to validate if an address is a valid Ring  address
+// Ring addresses should use Bech32m format and start with "rngp"
+bool IsValidRingAddress(const std::string& address) {
+    // Check if address starts with "rngp"
+    if (!IsValidBech32m(address)) {
+        return false;
+    }
+
+    return address.substr(0, 4) == "rngp";  // Ensure prefix "rngp" for Ring
+}
+
+// Function to check if an address is either Mith or Ring address
+// Returns true if the address is either a valid Mith or a valid Ring address
+bool IsValidAddress(const std::string& address) {
+    return IsValidMithAddress(address) || IsValidRingAddress(address);
+}
+
+// Function to set the currency type for a given address
+// This function checks whether the address belongs to Mith or Ring
+std::string GetCurrencyType(const std::string& address) {
+    if (IsValidMithAddress(address)) {
+        return "Mith";  // Mith address
+    }return "Invalid";  // Invalid address
+}
+
+// Function to validate a transaction based on currency isolation rules
+// This function ensures that all input and output addresses belong to the same currency (Mith or Ring)
+// It checks whether Mith and Ring addresses are mixed in the transaction
+bool IsValidTransaction(const CTransaction& tx) {
+    // Initialize variables to track the coin type of the first input and output
+    std::string currencyType = "";
+
+    // Step 1: Validate input addresses
+    for (const auto& input : tx.vin) {
+        std::string inputCurrencyType = GetCurrencyType(input.scriptSig.ToString());
+
+        // If currency type is not valid or mismatched, the transaction is invalid
+        if (inputCurrencyType == "Invalid") {
+            return false;  // Invalid input address
+        }
+
+        if (currencyType.empty()) {
+            currencyType = inputCurrencyType;  // Set the currency type from the first input
+        } else if (currencyType != inputCurrencyType) {
+            return false;  // Mixed currency types in inputs
+        }
+    }
+// If currency type is not valid or mismatched, the transaction is invalid
+        if (outputCurrencyType == "Invalid") {
+            return false;  // Invalid output address
+        }
+
+        if (currencyType != outputCurrencyType) {
+            return false;  // Mixed currency types in outputs
+        }
+    }
+
+    // Step 3: If all checks passed, the transaction is valid
+    return true;
 }
