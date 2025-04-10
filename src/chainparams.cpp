@@ -1,3 +1,4 @@
+// Copyright (c) 2025 The Dwarf Developers
 // Copyright (c) 2018-2019 The Ring Developers
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2018 The Bitcoin Core developers
@@ -155,6 +156,23 @@ public:
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S(LAST_ID_BLOCK_HASH);                // At lastInitialDistributionHeight
+        
+        // Parameters for the block reward halving mechanism
+        consensus.nSubsidyHalvingInterval = 420000;
+        consensus.initialBlockReward = 128 * COIN;
+        consensus.minBlockReward = 16 * COIN;
+        consensus.halvingInterval = 420000;
+
+        // Parameters for the ASERT difficulty adjustment mechanism
+        consensus.nPowTargetBlockTime = 5 * 60; // 5 minutes
+        consensus.nPowTargetTimespan = 1 * 24 * 60 * 60; // 1 day
+        consensus.nPowTargetSpacingEMA = 5 * 60; // 5 minutes
+        consensus.nPowTargetTimespanEMA = 1 * 24 * 60 * 60; // 1 day
+
+        // Parameters for the Argon2iD mining algorithm
+        consensus.argon2id_t_cost = 4000;
+        consensus.argon2id_m_cost = 1024 * 1024; // 1GB
+        consensus.argon2id_parallelism = 1;
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -311,6 +329,23 @@ public:
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x468f8ab3e6e257f7e21a0c330986e3fd70413a381e77ce16afbadabfd26b733a"); // 5400
+        
+        // Parameters for the block reward halving mechanism
+        consensus.nSubsidyHalvingInterval = 420000;
+        consensus.initialBlockReward = 128 * COIN;
+        consensus.minBlockReward = 16 * COIN;
+        consensus.halvingInterval = 420000;
+
+        // Parameters for the ASERT difficulty adjustment mechanism
+        consensus.nPowTargetBlockTime = 5 * 60; // 5 minutes
+        consensus.nPowTargetTimespan = 1 * 24 * 60 * 60; // 1 day
+        consensus.nPowTargetSpacingEMA = 5 * 60; // 5 minutes
+        consensus.nPowTargetTimespanEMA = 1 * 24 * 60 * 60; // 1 day
+
+        // Parameters for the Argon2iD mining algorithm
+        consensus.argon2id_t_cost = 4000;
+        consensus.argon2id_m_cost = 1024 * 1024; // 1GB
+        consensus.argon2id_parallelism = 1;
 
         pchMessageStart[0] = 0xb2;
         pchMessageStart[1] = 0xc4;
@@ -397,7 +432,24 @@ public:
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x00");
+        
+        // Parameters for the block reward halving mechanism
+        consensus.nSubsidyHalvingInterval = 420000;
+        consensus.initialBlockReward = 128 * COIN;
+        consensus.minBlockReward = 16 * COIN;
+        consensus.halvingInterval = 420000;
 
+        // Parameters for the ASERT difficulty adjustment mechanism
+        consensus.nPowTargetBlockTime = 5 * 60; // 5 minutes
+        consensus.nPowTargetTimespan = 1 * 24 * 60 * 60; // 1 day
+        consensus.nPowTargetSpacingEMA = 5 * 60; // 5 minutes
+        consensus.nPowTargetTimespanEMA = 1 * 24 * 60 * 60; // 1 day
+
+        // Parameters for the Argon2iD mining algorithm
+        consensus.argon2id_t_cost = 4000;
+        consensus.argon2id_m_cost = 1024 * 1024; // 1GB
+        consensus.argon2id_parallelism = 1;
+        
         pchMessageStart[0] = 0xfa;
         pchMessageStart[1] = 0xbf;
         pchMessageStart[2] = 0xb5;
