@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2018 The Bitcoin Core developers
+// Copyright (c) 2025 The dwarf developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -36,6 +37,20 @@ public:
     virtual bool RemoveWatchOnly(const CScript &dest) =0;
     virtual bool HaveWatchOnly(const CScript &dest) const =0;
     virtual bool HaveWatchOnly() const =0;
+    //! Function to validate if an address is a valid Mith address
+    virtual bool IsValidMithAddress(const std::string& address) const =0;
+
+    //! Function to validate if an address is a valid Ring address
+    virtual bool IsValidRingAddress(const std::string& address) const =0;
+
+    //! Function to check if an address is either Mith or Ring address
+    virtual bool IsValidAddress(const std::string& address) const =0;
+
+    //! Function to set the currency type for a given address
+    virtual std::string GetCurrencyType(const std::string& address) const =0;
+
+    //! Function to validate a transaction based on currency isolation rules
+    virtual bool IsValidTransaction(const CTransaction& tx) const =0;
 };
 
 /** Basic key store, that keeps keys in an address->secret map */
@@ -72,6 +87,11 @@ public:
     bool RemoveWatchOnly(const CScript &dest) override;
     bool HaveWatchOnly(const CScript &dest) const override;
     bool HaveWatchOnly() const override;
+    bool IsValidMithAddress(const std::string& address) const override;
+    bool IsValidRingAddress(const std::string& address) const override;
+    bool IsValidAddress(const std::string& address) const override;
+    std::string GetCurrencyType(const std::string& address) const override;
+    bool IsValidTransaction(const CTransaction& tx) const override;
 };
 
 /** Return the CKeyID of the key involved in a script (if there is a unique one). */
