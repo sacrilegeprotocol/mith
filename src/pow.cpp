@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2018 The Bitcoin Core developers
+// Copyright (c) 2025 The dwarf developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -752,7 +753,7 @@ bool CheckPopProof(const CBlock* pblock, const Consensus::Params& consensusParam
         LogPrintf("CheckPopProof: Pass at %i\n", blockHeight);
     return true;
 }
-/ ASERT difficulty adjustment mechanism
+    // ASERT difficulty adjustment mechanism
 unsigned int GetNextASERTWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params& params)
 {
     assert(pindexLast != nullptr);
@@ -790,4 +791,48 @@ bool Argon2iDHash(const std::string& password, const std::string& salt, std::vec
 {
     out.resize(32); // 32 bytes output
     return argon2id_hash_raw(4000, 1024 * 1024, 1, password.data(), password.size(), salt.data(), salt.size(), out.data(), out.size()) == 0;
+}
+
+// Implement the dynamic difficulty adjustment mechanism for Ring reward system
+void AdjustBurnDifficulty(const CBlockIndex* pindexPrev, const Consensus::Params& params, CAmount& targetBurnAmount) {
+    if (pindexPrev->nHeight % 2000 == 0) {
+        CAmount totalBurnVolume = 0;
+        const CBlockIndex* pindex = pindexPrev;
+        for (int i = 0; i < 2000; i++) {
+            totalBurnVolume += pindex->nBurnVolume;
+            pindex = pindex->pprev;
+        }
+        targetBurnAmount = targetBurnAmount * (totalBurnVolume / targetBurnAmount);
+    }
+}
+
+// Implement the burn mechanism for Ring reward system
+bool CheckBurnReward(const CBlockIndex* pindexPrev, const Consensus::Params& params, CAmount personalBurnAmount, CAmount& reward) {
+    if (pindexPrev->nHeight % 5 == 0) {
+        CAmount totalBurnVolume = 0;
+        const CBlockIndex* pindex = pindexPrev;
+        for (int i = 0; i < 5; i++) {
+            totalBurnVolume += pindex->nBurnVolume;
+            pindex = pindex->pprev;
+        }
+        double probability = static_cast<double>(personalBurnAmount) / totalBurnVolume;
+        double effectiveMiningPower = sqrt(static_cast<double>(personalBurnAmount));
+        if (GetRand(1.0) < probability * effectiveMiningPower) {
+            reward = 1; // 1 Ring is awarded
+            return true;
+        }
+    }
+    return false;
+}
+
+// Implement the VRF and block hash randomness for Ring reward system
+uint256 GenerateRandomNumber(const CBlockIndex* pindexPrev) {
+    uint256 hash;
+    CHashWriter ss(SER_GETHASH, 0);    
+	const CBlockIndex* pindex = pindexPrev;
+    for (int i = 0; i < 10; i++) {
+        ss << pindex->GetBlockHash();
+        pindex = pindex->pprev;
+    }
+    return ss.GetHash();
 }
