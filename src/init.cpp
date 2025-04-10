@@ -1838,3 +1838,45 @@ bool AppInitMain(InitInterfaces& interfaces)
 
     return true;
 }
+// 
+class BurnTransaction : public CTransaction {
+public:
+    uint64_t burnedAmount; // burnnumber
+    uint32_t burnBlockHeight;
+    uint32_t rewardBlockHeight;
+
+    bool IsValidBurn() const {
+        // 校验燃烧的合法性
+        return burnedAmount >= MIN_BURN_AMOUNT;
+    }
+};
+
+// 
+uint64_t GenerateRandomNumberFromBlockHashes(const std::vector<uint256>& blockHashes) {
+    // VRF
+    uint64_t randomNumber = 0;
+    for (const auto& hash : blockHashes) {
+        randomNumber ^= std::hash<uint256>()(hash); // 
+    }
+    return randomNumber;
+}
+
+// 
+class BurnManager {
+public:
+static bool ProcessBurn(const BurnTransaction& burnTx) {
+        // 
+        if (!burnTx.IsValidBurn()) {
+            return false;
+        }
+
+        // 
+        UpdateBurnData(burnTx);
+        return true;
+    }
+
+private:
+    static void UpdateBurnData(const BurnTransaction& burnTx) {
+        // 
+    }
+};
